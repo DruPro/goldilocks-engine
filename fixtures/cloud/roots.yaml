@@ -1,0 +1,67 @@
+# ILLUSTRATIVE FIXTURE: bands, targets and weights are invented for testing.
+# Metric formulas reference node ids and <dimension>.<attribute> of the picked options.
+roots:
+  - id: verify_p99_ms
+    description: p99 latency to verify a wallet request (two ledger reads, one signature).
+    sense: upper
+    target: 25
+    upper: 40
+    weight: 0.25
+    unit: ms
+    source: expert
+    illustrative: true
+    metric: "net_rtt_ms + compute.verify_cpu_ms + signing.sign_ms + 2 * store.read_ms / (1 - min(peak_tps / store.capacity_tps, 0.9))"
+  - id: settle_p99_s
+    description: p99 time to settle a transfer into the ledger.
+    sense: upper
+    target: 1
+    upper: 2
+    weight: 0.15
+    unit: s
+    source: expert
+    illustrative: true
+    metric: "settle.settle_base_s + settle_writes * store.write_ms / 1000 / (1 - min(peak_tps / store.capacity_tps, 0.9)) + 4 * net_rtt_ms / 1000"
+  - id: spend_usd_month
+    description: Monthly infrastructure spend at peak volume.
+    sense: upper
+    target: 1500
+    upper: 2600
+    weight: 0.25
+    unit: USD/month
+    source: expert
+    illustrative: true
+    metric: "compute.base_usd + store.base_usd + signing.base_usd + settle.base_usd + audit.base_usd + peak_tps * (compute.usd_per_tps + store.usd_per_tps + signing.usd_per_tps)"
+  - id: ops_hours_month
+    description: Operator hours per month for one person.
+    sense: upper
+    target: 10
+    upper: 20
+    weight: 0.15
+    unit: h/month
+    source: expert
+    illustrative: true
+    metric: "(compute.ops_h + store.ops_h + signing.ops_h + settle.ops_h + audit.ops_h) * incident_factor"
+  - id: lockin_score
+    description: Sum of lock-in points across the picked options.
+    sense: upper
+    target: 3
+    upper: 7
+    weight: 0.1
+    unit: points
+    source: expert
+    illustrative: true
+    metric: "compute.lockin + store.lockin + signing.lockin + settle.lockin + audit.lockin"
+  - id: audit_verify_h
+    description: Hours to independently verify the full ledger history.
+    sense: upper
+    target: 2
+    upper: 6
+    weight: 0.1
+    unit: h
+    source: expert
+    illustrative: true
+    metric: "ledger_entries_m * audit.verify_s_per_m / 3600"
+approval:
+  approved_by: fixture
+  approved_at: "2026-10-19T00:00:00Z"
+  note: Illustrative fixture roots; the Phase 3 gate replaces this record with a real approval.

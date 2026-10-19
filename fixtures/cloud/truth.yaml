@@ -1,0 +1,13 @@
+# ILLUSTRATIVE hidden truth for the synthetic oracle (used only with --oracle).
+# Values are set on the fully expanded tree; nodes not listed are drawn once from
+# the prior on the "oracle/truth" stream, and deterministic nodes are computed.
+illustrative: true
+note: Invented values; kv_log reads turn out fast, so the cheap families qualify.
+values:
+  read_ms@kv_log: 2.6
+  peak_tps: 360
+  verify_cpu_ms@containers: 4.8
+  read_ms@managed_sql: 5.1
+  sign_ms@kms: 3.4
+  active_wallets_k: 104
+  entries_per_wallet: 5000

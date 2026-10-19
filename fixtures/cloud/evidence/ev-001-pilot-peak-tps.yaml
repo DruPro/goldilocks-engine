@@ -1,0 +1,11 @@
+# ILLUSTRATIVE FIXTURE evidence: invented pilot readings.
+id: ev-001-pilot-peak-tps
+target_node: peak_tps
+observation: { values: [290, 345, 310] }
+likelihood: lognormal
+noise: 0.2
+source: measured
+approved_by: fixture
+approved_at: "2026-10-19T00:00:00Z"
+note: Three invented peak readings from a pilot week.
+illustrative: true

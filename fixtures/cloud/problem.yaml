@@ -1,0 +1,25 @@
+# ILLUSTRATIVE FIXTURE. Every number in this folder is invented for testing the
+# engine. Option names are generic architecture patterns, not real vendors or
+# products, and no figure here is a claim about any real system's price or speed.
+title: Single-operator wallet and ledger platform (illustrative)
+illustrative: true
+objectives:
+  - Verify a wallet balance or transfer request fast enough for interactive use.
+  - Settle transfers into the ledger within a couple of seconds.
+  - Keep monthly spend and operator hours within what one person can run.
+  - Avoid deep lock-in to any single managed service.
+  - Keep the full ledger independently verifiable in a reasonable time.
+constraints:
+  - p99 verify latency under 40 ms.
+  - p99 settle latency under 2 s.
+  - Monthly spend under a fixed ceiling.
+  - Operator hours per month that a single person can sustain.
+  - Lock-in score under an agreed limit.
+  - Full-ledger verification completes within a working day.
+gates:
+  - id: ledger_tamper_evident
+    description: The ledger must be append-only and tamper-evident (correctness gate).
+    formula: "audit.tamper_evident >= 1"
+  - id: keys_protected
+    description: Signing keys must live in a managed key service or dedicated hardware.
+    formula: "signing.key_protection >= 1"

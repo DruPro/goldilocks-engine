@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/catalog.schema.json",
+  "title": "catalog",
+  "type": "object",
+  "properties": {
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "label": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "attributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "measured",
+                              "document",
+                              "expert",
+                              "llm_guess"
+                            ],
+                            "description": "Where a number came from. llm_guess priors must be wide."
+                          },
+                          "unit": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "source"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "range": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                          },
+                          "dist": {
+                            "type": "string",
+                            "enum": [
+                              "uniform",
+                              "lognormal"
+                            ],
+                            "description": "lognormal: range is the 90% interval"
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "measured",
+                              "document",
+                              "expert",
+                              "llm_guess"
+                            ],
+                            "description": "Where a number came from. llm_guess priors must be wide."
+                          },
+                          "observable": {
+                            "type": "boolean"
+                          },
+                          "measure_cost": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "measurement": {
+                            "type": "object",
+                            "description": "How a MEASURE of this node is observed (used to draft evidence and by the synthetic oracle).",
+                            "properties": {
+                              "likelihood": {
+                                "type": "string",
+                                "enum": [
+                                  "normal",
+                                  "lognormal",
+                                  "binomial",
+                                  "interval"
+                                ]
+                              },
+                              "noise": {
+                                "type": "number",
+                                "exclusiveMinimum": 0
+                              },
+                              "replicates": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 1000
+                              }
+                            },
+                            "required": [
+                              "likelihood",
+                              "noise"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "unit": {
+                            "type": "string"
+                          },
+                          "rationale": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "range",
+                          "source"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "propertyNames": {
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                  }
+                },
+                "illustrative": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "attributes"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "options"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "illustrative": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "dimensions"
+  ],
+  "additionalProperties": false
+}

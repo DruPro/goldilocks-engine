@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/decompositions.schema.json",
+  "title": "decompositions",
+  "type": "object",
+  "properties": {
+    "decompositions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "parent": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "replace": {
+            "type": "object",
+            "properties": {
+              "distribution": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "normal",
+                      "lognormal",
+                      "uniform",
+                      "triangular",
+                      "logitnormal",
+                      "deterministic"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "params"
+                ],
+                "additionalProperties": false
+              },
+              "dependency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "distribution"
+            ],
+            "additionalProperties": false
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "title": "ParamNode",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+                },
+                "parent_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+                  }
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "root",
+                    "sub"
+                  ]
+                },
+                "distribution": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "normal",
+                        "lognormal",
+                        "uniform",
+                        "triangular",
+                        "logitnormal",
+                        "deterministic"
+                      ]
+                    },
+                    "params": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                "dependency": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Formula over parent ids, evaluated by the safe evaluator."
+                },
+                "observable": {
+                  "type": "boolean"
+                },
+                "measure_cost": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "USD, same unit as the EVPPI utility."
+                },
+                "measurement": {
+                  "type": "object",
+                  "description": "How a MEASURE of this node is observed (used to draft evidence and by the synthetic oracle).",
+                  "properties": {
+                    "likelihood": {
+                      "type": "string",
+                      "enum": [
+                        "normal",
+                        "lognormal",
+                        "binomial",
+                        "interval"
+                      ]
+                    },
+                    "noise": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "replicates": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 1000
+                    }
+                  },
+                  "required": [
+                    "likelihood",
+                    "noise"
+                  ],
+                  "additionalProperties": false
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "measured",
+                    "document",
+                    "expert",
+                    "llm_guess"
+                  ],
+                  "description": "Where a number came from. llm_guess priors must be wide."
+                },
+                "rationale": {
+                  "type": "string"
+                },
+                "illustrative": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "parent_ids",
+                "kind",
+                "distribution",
+                "observable",
+                "source",
+                "rationale"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "parent",
+          "rationale",
+          "children"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "illustrative": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "decompositions"
+  ],
+  "additionalProperties": false
+}

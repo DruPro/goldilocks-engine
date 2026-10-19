@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/problem.schema.json",
+  "title": "problem",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "objectives": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "formula": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "formula"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "illustrative": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "title",
+    "objectives",
+    "constraints",
+    "gates"
+  ],
+  "additionalProperties": false
+}

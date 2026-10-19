@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/evidence.schema.json",
+  "title": "Evidence",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+$"
+    },
+    "target_node": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+    },
+    "observation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "values"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "k": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "n": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "k",
+            "n"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "lo": {
+              "type": "number"
+            },
+            "hi": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lo",
+            "hi"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "likelihood": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "lognormal",
+        "binomial",
+        "interval"
+      ]
+    },
+    "noise": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "measured",
+        "document",
+        "expert",
+        "llm_guess"
+      ],
+      "description": "Where a number came from. llm_guess priors must be wide."
+    },
+    "approved_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approved_at": {
+      "type": "string"
+    },
+    "approval_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 of the record without its approval fields, set by gde approve"
+    },
+    "note": {
+      "type": "string"
+    },
+    "illustrative": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "target_node",
+    "observation",
+    "likelihood",
+    "noise",
+    "source",
+    "approved_by"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,41 @@
+# Solution space = every combination of one option per dimension.
+# `value` = fixed fact; `range` = uncertain estimate (becomes a parameter).
+# Tag every number's source: measured | document | expert | llm_guess.
+dimensions:
+  - id: cache
+    label: Cache layer
+    options:
+      - id: none
+        label: No cache
+        attributes:
+          hit_ratio: { value: 0, source: expert }
+          hit_ms: { value: 0, source: expert }
+          base_usd: { value: 0, source: expert }
+          in_region: { value: 1, source: expert }
+      - id: in_memory
+        label: In-process memory cache
+        attributes:
+          hit_ratio: { range: [0.2, 0.9], source: llm_guess, observable: true, measure_cost: 200, measurement: { likelihood: normal, noise: 0.05, replicates: 3 } }
+          hit_ms: { value: 1, source: expert }
+          base_usd: { value: 50, source: expert }
+          in_region: { value: 1, source: expert }
+      - id: shared_kv
+        label: Shared key-value cache cluster
+        attributes:
+          hit_ratio: { range: [0.6, 0.95], source: expert, observable: true, measure_cost: 300, measurement: { likelihood: normal, noise: 0.05, replicates: 3 } }
+          hit_ms: { range: [2, 6], source: expert }
+          base_usd: { value: 400, source: expert }
+          in_region: { value: 1, source: expert }
+  - id: db
+    label: Database tier
+    options:
+      - id: small
+        label: Small instance
+        attributes:
+          read_ms: { range: [20, 90], dist: lognormal, source: llm_guess, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 5, replicates: 5 } }
+          base_usd: { value: 300, source: expert }
+      - id: large
+        label: Large instance
+        attributes:
+          read_ms: { range: [8, 30], dist: lognormal, source: expert, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 3, replicates: 5 } }
+          base_usd: { value: 1200, source: expert }

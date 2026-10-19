@@ -1,0 +1,171 @@
+# ILLUSTRATIVE FIXTURE. Generic architecture patterns only: no vendor, product or
+# real price is represented. Ranges are invented to exercise the engine.
+# A `range` becomes an uncertain node <attribute>@<option>; a `value` is fixed.
+# measure_cost is in USD (same unit as the EVPPI utility).
+illustrative: true
+dimensions:
+  - id: compute
+    label: Request compute
+    options:
+      - id: fn
+        label: Serverless functions (generic)
+        illustrative: true
+        attributes:
+          verify_cpu_ms: { range: [5, 18], dist: lognormal, source: llm_guess, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 2.0, replicates: 5 }, unit: ms }
+          base_usd: { value: 40, source: document }
+          usd_per_tps: { range: [0.9, 1.8], source: document, unit: USD/month per TPS }
+          ops_h: { value: 1, source: expert }
+          lockin: { value: 2, source: expert }
+      - id: containers
+        label: Managed container service (generic)
+        illustrative: true
+        attributes:
+          verify_cpu_ms: { range: [3, 8], dist: lognormal, source: expert, observable: true, measure_cost: 300, measurement: { likelihood: normal, noise: 0.8, replicates: 5 }, unit: ms }
+          base_usd: { value: 220, source: document }
+          usd_per_tps: { range: [0.25, 0.5], source: document }
+          ops_h: { value: 4, source: expert }
+          lockin: { value: 1, source: expert }
+      - id: vms
+        label: Self-managed virtual machines (generic)
+        illustrative: true
+        attributes:
+          verify_cpu_ms: { range: [2.5, 6], source: expert, observable: true, measure_cost: 300, measurement: { likelihood: normal, noise: 0.6, replicates: 5 }, unit: ms }
+          base_usd: { value: 160, source: document }
+          usd_per_tps: { range: [0.2, 0.4], source: document }
+          ops_h: { value: 9, source: expert }
+          lockin: { value: 0, source: expert }
+  - id: store
+    label: Ledger store
+    options:
+      - id: managed_sql
+        label: Managed relational database, HA pair (generic)
+        illustrative: true
+        attributes:
+          read_ms: { range: [3, 8], dist: lognormal, source: document, observable: true, measure_cost: 400, measurement: { likelihood: normal, noise: 0.8, replicates: 5 }, unit: ms }
+          write_ms: { range: [6, 14], dist: lognormal, source: document, observable: true, measure_cost: 400, measurement: { likelihood: normal, noise: 1.5, replicates: 5 }, unit: ms }
+          capacity_tps: { value: 1200, source: document }
+          base_usd: { value: 380, source: document }
+          usd_per_tps: { value: 0.3, source: document }
+          ops_h: { value: 2, source: expert }
+          lockin: { value: 2, source: expert }
+      - id: dist_sql
+        label: Distributed SQL cluster (generic)
+        illustrative: true
+        attributes:
+          read_ms: { range: [6, 16], dist: lognormal, source: document, observable: true, measure_cost: 600, measurement: { likelihood: normal, noise: 1.5, replicates: 5 }, unit: ms }
+          write_ms: { range: [12, 30], dist: lognormal, source: document, observable: true, measure_cost: 600, measurement: { likelihood: normal, noise: 3.0, replicates: 5 }, unit: ms }
+          capacity_tps: { value: 5000, source: document }
+          base_usd: { value: 900, source: document }
+          usd_per_tps: { value: 0.2, source: document }
+          ops_h: { value: 3, source: expert }
+          lockin: { value: 2, source: expert }
+      - id: kv_log
+        label: Key-value store with an append-only log (generic)
+        illustrative: true
+        attributes:
+          read_ms: { range: [1.5, 12], dist: lognormal, source: llm_guess, observable: true, measure_cost: 350, measurement: { likelihood: normal, noise: 1.0, replicates: 5 }, unit: ms, rationale: "No benchmark yet; wide guess" }
+          write_ms: { range: [3, 8], dist: lognormal, source: expert, observable: true, measure_cost: 350, measurement: { likelihood: normal, noise: 0.8, replicates: 5 }, unit: ms }
+          capacity_tps: { value: 2500, source: document }
+          base_usd: { value: 180, source: document }
+          usd_per_tps: { value: 0.12, source: document }
+          ops_h: { value: 3, source: expert }
+          lockin: { value: 1, source: expert }
+  - id: signing
+    label: Transaction signing
+    options:
+      - id: soft_key
+        label: Software key held by the application (generic)
+        illustrative: true
+        attributes:
+          sign_ms: { range: [0.3, 1.0], source: expert, unit: ms }
+          base_usd: { value: 0, source: document }
+          usd_per_tps: { value: 0, source: document }
+          ops_h: { value: 2, source: expert }
+          lockin: { value: 0, source: expert }
+          key_protection: { value: 0, source: expert }
+      - id: kms
+        label: Managed key service (generic)
+        illustrative: true
+        attributes:
+          sign_ms: { range: [2, 6], dist: lognormal, source: document, observable: true, measure_cost: 200, measurement: { likelihood: normal, noise: 0.6, replicates: 5 }, unit: ms }
+          base_usd: { value: 30, source: document }
+          usd_per_tps: { value: 0.15, source: document }
+          ops_h: { value: 0.5, source: expert }
+          lockin: { value: 2, source: expert }
+          key_protection: { value: 1, source: expert }
+      - id: hsm
+        label: Dedicated hardware security module (generic)
+        illustrative: true
+        attributes:
+          sign_ms: { range: [0.8, 2.5], source: document, observable: true, measure_cost: 500, measurement: { likelihood: normal, noise: 0.3, replicates: 5 }, unit: ms }
+          base_usd: { value: 1100, source: document }
+          usd_per_tps: { value: 0, source: document }
+          ops_h: { value: 4, source: expert }
+          lockin: { value: 1, source: expert }
+          key_protection: { value: 2, source: expert }
+  - id: settle
+    label: Settlement path
+    options:
+      - id: sync
+        label: Synchronous settlement in the request (generic)
+        illustrative: true
+        attributes:
+          settle_base_s: { range: [0.15, 0.5], source: expert, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 0.05, replicates: 5 }, unit: s }
+          base_usd: { value: 0, source: document }
+          ops_h: { value: 0.5, source: expert }
+          lockin: { value: 0, source: expert }
+      - id: queue
+        label: Asynchronous queue worker (generic)
+        illustrative: true
+        attributes:
+          settle_base_s: { range: [0.4, 1.2], dist: lognormal, source: expert, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 0.1, replicates: 5 }, unit: s }
+          base_usd: { value: 60, source: document }
+          ops_h: { value: 1, source: expert }
+          lockin: { value: 1, source: expert }
+      - id: batch
+        label: Micro-batch settlement (generic)
+        illustrative: true
+        attributes:
+          settle_base_s: { range: [0.6, 2.8], source: llm_guess, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 0.2, replicates: 5 }, unit: s }
+          base_usd: { value: 20, source: document }
+          ops_h: { value: 1.5, source: expert }
+          lockin: { value: 0, source: expert }
+  - id: audit
+    label: Ledger audit structure
+    options:
+      - id: plain_log
+        label: Plain append log, no proofs (generic)
+        illustrative: true
+        attributes:
+          verify_s_per_m: { value: 2, source: expert, unit: s per million entries }
+          base_usd: { value: 0, source: document }
+          ops_h: { value: 0.5, source: expert }
+          lockin: { value: 0, source: expert }
+          tamper_evident: { value: 0, source: expert }
+      - id: hash_chain
+        label: Hash-chained entries (generic)
+        illustrative: true
+        attributes:
+          verify_s_per_m: { range: [40, 120], source: expert, observable: true, measure_cost: 200, measurement: { likelihood: normal, noise: 8, replicates: 3 }, unit: s per million entries }
+          base_usd: { value: 10, source: document }
+          ops_h: { value: 1, source: expert }
+          lockin: { value: 0, source: expert }
+          tamper_evident: { value: 1, source: expert }
+      - id: merkle
+        label: Merkle tree with inclusion proofs (generic)
+        illustrative: true
+        attributes:
+          verify_s_per_m: { range: [8, 30], dist: lognormal, source: expert, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 2, replicates: 3 }, unit: s per million entries }
+          base_usd: { value: 60, source: document }
+          ops_h: { value: 2, source: expert }
+          lockin: { value: 0, source: expert }
+          tamper_evident: { value: 1, source: expert }
+      - id: anchored
+        label: Merkle tree with external anchoring (generic)
+        illustrative: true
+        attributes:
+          verify_s_per_m: { range: [5, 15], source: expert, observable: true, measure_cost: 250, measurement: { likelihood: normal, noise: 1, replicates: 3 }, unit: s per million entries }
+          base_usd: { value: 150, source: document }
+          ops_h: { value: 1, source: expert }
+          lockin: { value: 2, source: expert }
+          tamper_evident: { value: 1, source: expert }

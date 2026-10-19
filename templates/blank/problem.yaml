@@ -1,0 +1,13 @@
+# Describe the decision in plain words. Gates are hard pass/fail filters on FIXED
+# catalog attributes (they are never scored).
+title: Read cache for a product API (example - replace)
+objectives:
+  - Serve product reads quickly at peak traffic.
+  - Keep monthly spend low.
+constraints:
+  - p99 read latency under 50 ms.
+  - Spend under a monthly ceiling.
+gates:
+  - id: data_residency
+    description: Data must stay in the home region.
+    formula: "cache.in_region >= 1"

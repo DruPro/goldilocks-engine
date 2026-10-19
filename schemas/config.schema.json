@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/config.schema.json",
+  "title": "config",
+  "type": "object",
+  "properties": {
+    "seed": {
+      "type": "integer"
+    },
+    "particles": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 200000
+    },
+    "tau": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1
+    },
+    "epsilon": {
+      "type": "number",
+      "minimum": 0
+    },
+    "beta": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "iteration_budget": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "zone_rule": {
+      "type": "string",
+      "enum": [
+        "softmin",
+        "softmin_and_all"
+      ]
+    },
+    "evppi": {
+      "type": "object",
+      "properties": {
+        "bins": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "null_permutations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "bins",
+        "null_permutations"
+      ],
+      "additionalProperties": false
+    },
+    "smc": {
+      "type": "object",
+      "properties": {
+        "ess_fraction": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "move_steps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "step_scale": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "ess_fraction",
+        "move_steps",
+        "step_scale"
+      ],
+      "additionalProperties": false
+    },
+    "axis": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+        },
+        "multipliers": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 2
+        },
+        "particles": {
+          "type": "integer",
+          "minimum": 50
+        }
+      },
+      "required": [
+        "node",
+        "multipliers",
+        "particles"
+      ],
+      "additionalProperties": false
+    },
+    "utility": {
+      "type": "object",
+      "properties": {
+        "spend_root": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+        },
+        "horizon_months": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "miss_penalty_usd": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "spend_root",
+        "horizon_months",
+        "miss_penalty_usd"
+      ],
+      "additionalProperties": false
+    },
+    "expand_cost_usd": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "llm_guess_min_rel_width": {
+      "type": "number",
+      "minimum": 0,
+      "description": "(hi - lo) / |mid| of the 90% prior interval"
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "agents": {
+      "type": "object",
+      "properties": {
+        "decomposer": {
+          "type": "string",
+          "enum": [
+            "fixture",
+            "llm"
+          ],
+          "description": "Where EXPAND gets decompositions: the fixture file or the LLM decomposer"
+        },
+        "hybrids": {
+          "type": "boolean",
+          "description": "Ask the LLM for hybrid options when G is empty or every member is within 0.05 of tau"
+        },
+        "critic": {
+          "type": "boolean",
+          "description": "LLM advice on the code critic flags (kept out of snapshots)"
+        },
+        "explain": {
+          "type": "boolean",
+          "description": "LLM-written explanations in the brief (numbers filled in by code)"
+        },
+        "max_hybrid_calls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "decomposer",
+        "hybrids",
+        "critic",
+        "explain",
+        "max_hybrid_calls"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "seed",
+    "particles",
+    "tau",
+    "epsilon",
+    "beta",
+    "iteration_budget",
+    "evppi",
+    "smc",
+    "axis",
+    "utility",
+    "expand_cost_usd",
+    "llm_guess_min_rel_width",
+    "models"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/truth.schema.json",
+  "title": "truth",
+  "type": "object",
+  "properties": {
+    "values": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "note": {
+      "type": "string"
+    },
+    "illustrative": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "values"
+  ],
+  "additionalProperties": false
+}

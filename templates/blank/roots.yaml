@@ -1,0 +1,24 @@
+# Quantified requirements. A person must approve this file before any run:
+#   bun src/cli.ts approve roots <dir>/roots.yaml --by "Your Name"
+roots:
+  - id: read_p99_ms
+    description: p99 product read latency
+    sense: upper
+    target: 25
+    upper: 50
+    weight: 0.6
+    unit: ms
+    source: document
+    metric: "cache.hit_ratio * cache.hit_ms + (1 - cache.hit_ratio) * db.read_ms * load_factor"
+  - id: spend_usd_month
+    description: Monthly spend
+    sense: upper
+    target: 800
+    upper: 1600
+    weight: 0.4
+    unit: USD/month
+    source: expert
+    metric: "cache.base_usd + db.base_usd"
+approval:
+  approved_by: ""
+  approved_at: ""

@@ -1,0 +1,20 @@
+# Run configuration. Money values are USD and illustrative.
+seed: 20261019
+particles: 4000
+tau: 0.85
+epsilon: 0.25
+beta: 10
+iteration_budget: 10
+zone_rule: softmin
+evppi: { bins: 10, null_permutations: 4 }
+smc: { ess_fraction: 0.5, move_steps: 4, step_scale: 0.5 }
+axis: { node: load_factor, multipliers: [0.5, 0.75, 1, 1.5, 2, 3, 4], particles: 600 }
+utility: { spend_root: spend_usd_month, horizon_months: 12, miss_penalty_usd: 40000 }
+expand_cost_usd: 150
+llm_guess_min_rel_width: 1.0
+models:
+  requirements: claude-opus-5-5
+  decomposer: claude-opus-5-5
+  critic: claude-opus-5-5
+  evidence: claude-sonnet-5-5
+  explainer: claude-sonnet-5-5

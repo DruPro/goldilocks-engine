@@ -1,0 +1,11 @@
+# ILLUSTRATIVE FIXTURE evidence: an invented documentation range.
+id: ev-002-doc-sign-kms
+target_node: sign_ms@kms
+observation: { lo: 2.5, hi: 5 }
+likelihood: interval
+noise: 0.3
+source: document
+approved_by: fixture
+approved_at: "2026-10-19T00:00:00Z"
+note: Invented documented latency range for the managed key service pattern.
+illustrative: true

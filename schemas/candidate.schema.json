@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/candidate.schema.json",
+  "title": "Candidate",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "picks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+      }
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "catalog",
+        "llm_proposed"
+      ]
+    },
+    "gate_results": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "picks",
+    "origin",
+    "gate_results"
+  ],
+  "additionalProperties": false
+}

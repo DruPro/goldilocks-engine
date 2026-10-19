@@ -1,0 +1,123 @@
+# ILLUSTRATIVE FIXTURE. Decompositions applied to roots at start, plus the ones
+# EXPAND can reveal later. In Phase 1 this file stands in for the LLM decomposer.
+# Each collapsed prior equals the marginal its decomposition implies (products of
+# lognormals are lognormal), so expanding a node never changes what the model believes.
+illustrative: true
+decompositions:
+  - parent: verify_p99_ms
+    rationale: Verify latency depends on network round trips and on load relative to store capacity.
+    children:
+      - id: peak_tps
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 320, sigma: 0.45 } }
+        observable: true
+        measure_cost: 300
+        measurement: { likelihood: lognormal, noise: 0.15, replicates: 3 }
+        unit: TPS
+        source: expert
+        rationale: Peak transfers per second the platform must absorb.
+        illustrative: true
+      - id: net_rtt_ms
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 8.96, sigma: 0.30806 } }
+        observable: false
+        unit: ms
+        source: document
+        rationale: Client-to-service round trip; not directly observable end to end.
+        illustrative: true
+  - parent: settle_p99_s
+    rationale: Settlement time grows with the number of ledger writes per transfer.
+    children:
+      - id: settle_writes
+        parent_ids: []
+        kind: sub
+        distribution: { type: normal, params: { mean: 4, sd: 0.5 } }
+        observable: true
+        measure_cost: 150
+        measurement: { likelihood: normal, noise: 0.3, replicates: 3 }
+        unit: writes per transfer
+        source: expert
+        rationale: Ledger writes needed to settle one transfer (double entry plus bookkeeping).
+        illustrative: true
+  - parent: ops_hours_month
+    rationale: Baseline operator hours are inflated by incidents.
+    children:
+      - id: incident_factor
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 1.2, sigma: 0.25 } }
+        observable: true
+        measure_cost: 400
+        measurement: { likelihood: lognormal, noise: 0.1, replicates: 2 }
+        source: expert
+        rationale: Multiplier on planned operator hours from unplanned incidents.
+        illustrative: true
+  - parent: audit_verify_h
+    rationale: Verification time scales with the size of the full ledger history.
+    children:
+      - id: ledger_entries_m
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 400, sigma: 0.70711 } }
+        observable: false
+        unit: millions of entries
+        source: llm_guess
+        rationale: Total ledger entries retained; a wide guess until usage data exists.
+        illustrative: true
+  - parent: net_rtt_ms
+    rationale: The round trip is the client leg times a multiplicative edge overhead (proxy and TLS hops), each measurable.
+    replace:
+      distribution: { type: deterministic, params: {} }
+      dependency: "client_rtt_ms * edge_overhead"
+    children:
+      - id: client_rtt_ms
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 7, sigma: 0.25 } }
+        observable: true
+        measure_cost: 150
+        measurement: { likelihood: normal, noise: 1.0, replicates: 5 }
+        unit: ms
+        source: document
+        rationale: Client leg of the round trip.
+        illustrative: true
+      - id: edge_overhead
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 1.28, sigma: 0.18 } }
+        observable: true
+        measure_cost: 120
+        measurement: { likelihood: normal, noise: 0.05, replicates: 5 }
+        source: expert
+        rationale: Multiplicative overhead of the edge proxy and TLS termination.
+        illustrative: true
+  - parent: ledger_entries_m
+    rationale: Ledger size is wallets times entries per wallet over the retention period.
+    replace:
+      distribution: { type: deterministic, params: {} }
+      dependency: "active_wallets_k * entries_per_wallet / 1000"
+    children:
+      - id: active_wallets_k
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 80, sigma: 0.5 } }
+        observable: true
+        measure_cost: 200
+        measurement: { likelihood: lognormal, noise: 0.1, replicates: 1 }
+        unit: thousands of wallets
+        source: llm_guess
+        rationale: Active wallets over the retention period.
+        illustrative: true
+      - id: entries_per_wallet
+        parent_ids: []
+        kind: sub
+        distribution: { type: lognormal, params: { median: 5000, sigma: 0.5 } }
+        observable: true
+        measure_cost: 250
+        measurement: { likelihood: lognormal, noise: 0.2, replicates: 2 }
+        unit: entries per wallet
+        source: llm_guess
+        rationale: Ledger entries per wallet over the retention period.
+        illustrative: true

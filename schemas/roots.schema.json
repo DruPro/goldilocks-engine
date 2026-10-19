@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldilocks.local/schemas/roots.schema.json",
+  "title": "roots",
+  "type": "object",
+  "properties": {
+    "roots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:@[A-Za-z_][A-Za-z0-9_]*)?$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sense": {
+            "type": "string",
+            "enum": [
+              "upper",
+              "lower",
+              "band"
+            ],
+            "description": "upper: g <= U; lower: g >= L; band: L <= g <= U"
+          },
+          "target": {
+            "type": "number"
+          },
+          "lower": {
+            "type": "number"
+          },
+          "upper": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "metric": {
+            "type": "string",
+            "minLength": 1,
+            "description": "g_i(x, Θ): formula over node ids and <dimension>.<attribute> of the picked options."
+          },
+          "unit": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "document",
+              "expert",
+              "llm_guess"
+            ],
+            "description": "Where a number came from. llm_guess priors must be wide."
+          },
+          "illustrative": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "sense",
+          "target",
+          "weight",
+          "metric",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "approval": {
+      "type": "object",
+      "properties": {
+        "approved_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approved_at": {
+          "type": "string"
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of the roots without this record, set by gde approve"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "approved_by",
+        "approved_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "roots",
+    "approval"
+  ],
+  "additionalProperties": false
+}
